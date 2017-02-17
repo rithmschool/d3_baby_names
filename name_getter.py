@@ -35,18 +35,20 @@ for state in states:
     female_data = {'year': int(year), 'names': []}
     for row in data_rows:
       tds = row.find_all('td')
-      male_data_row = {
-        'rank': int(tds[0].text), 
-        'name': tds[1].text, 
-        'births': int(tds[2].text)
-      }
-      female_data_row = {
-        'rank': int(tds[0].text),
-        'name': tds[3].text,
-        'births': int(tds[4].text)
-      }
-      male_data['names'].append(male_data_row)
-      female_data['names'].append(female_data_row)
+      if tds[1].text != '\xa0':
+        male_data_row = {
+          'rank': int(tds[0].text), 
+          'name': tds[1].text, 
+          'births': int(tds[2].text)
+        }
+        male_data['names'].append(male_data_row)
+      if tds[3].text != '\xa0':
+        female_data_row = {
+          'rank': int(tds[0].text),
+          'name': tds[3].text,
+          'births': int(tds[4].text)
+        }
+        female_data['names'].append(female_data_row)
     new_dict['maleData'].append(male_data)
     new_dict['femaleData'].append(female_data)
     print("Finished year {} for {}".format(year, new_dict['stateName']))
