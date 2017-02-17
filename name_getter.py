@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import ConnectionError
 from bs4 import BeautifulSoup
 from states import states
 import json
@@ -17,7 +18,12 @@ for state in states:
     'femaleData': []
   }
   for year in years:
-    r = requests.post(BASE_URL, data={'name': year, 'state': state})
+    r = None
+    while not r:
+      try:
+        r = requests.post(BASE_URL, data={'name': year, 'state': state})
+      except ConnectionError as e:
+        print('connection error, trying again...')
     html = r.text
     soup = BeautifulSoup(html, 'html.parser')
     data_table = soup.find_all('table')[1].find_all('table')[1]
@@ -40,7 +46,7 @@ for state in states:
         'births': int(tds[4].text)
       }
       male_data['names'].append(male_data_row)
-      female_data.append(female_data_row)
+      female_data['names'].append(female_data_row)
     new_dict['maleData'].append(male_data)
     new_dict['femaleData'].append(female_data)
     print("Finished year {} for {}".format(year, new_dict['stateName']))
