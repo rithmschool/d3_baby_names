@@ -39,14 +39,14 @@ for state in states:
         male_data_row = {
           'rank': int(tds[0].text), 
           'name': tds[1].text, 
-          'births': int(tds[2].text)
+          'births': int(tds[2].text.replace(",",""))
         }
         male_data['names'].append(male_data_row)
       if tds[3].text != '\xa0':
         female_data_row = {
           'rank': int(tds[0].text),
           'name': tds[3].text,
-          'births': int(tds[4].text)
+          'births': int(tds[4].text.replace(",",""))
         }
         female_data['names'].append(female_data_row)
     new_dict['maleData'].append(male_data)
