@@ -53,6 +53,5 @@ for state in states:
     new_dict['femaleData'].append(female_data)
     print("Finished year {} for {}".format(year, new_dict['stateName']))
   state_data.append(new_dict)
-
-with open('state_data.json', 'w') as f:
-  json.dump(state_data, f)
+  with open('state_data.json', 'w') as f:
+    json.dump(state_data, f)
