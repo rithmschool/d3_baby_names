@@ -1,0 +1,48 @@
+.pure-menu-horizontal {
+  background-color: #daa9ff;
+}
+
+.button-secondary {
+    color: white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    background: rgb(66, 184, 221);
+}
+
+.banner {
+  height: 400px;
+  background-image: linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0.3)), url('../images/baby-hero.jpg');
+  background-repeat: no-repeat;
+  background-position: left -300px; 
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-direction: column;
+  color: white;
+}
+
+.banner-content {
+  text-align: right;
+  margin-right: 30px;
+  text-shadow: 0 0 10px #333;
+}
+
+.banner-content input {
+  color: #000;
+}
+
+@media (max-width: 480px) {
+  #name-input {
+    display: inline;
+  }
+
+  #name-input + .pure-button {
+    margin-top: -6px;
+  }
+}
