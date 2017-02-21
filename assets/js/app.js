@@ -5,7 +5,7 @@ import uniqueBoyNames from "./uniqueBoyNames";
 import uniqueGirlNames from "./uniqueGirlNames";
 import * as d3 from "d3";
 import Autocomplete from 'autocomplete';
-import { capitalize, updateNameList } from './helpers'
+import { capitalize, updateNameList, createChart } from './helpers'
 
 let maleAutocomplete = Autocomplete.connectAutocomplete();
 maleAutocomplete.initialize(wordAdd => wordAdd(uniqueBoyNames));
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // set input value when selecting from autocomplete
   namesList.addEventListener('mousedown', function(e) {
-    var tgt = e.target;
+    let tgt = e.target;
     if (tgt.tagName === "LI") {
       input.value = tgt.innerText;
       updateNameList(namesList, currentAutocomplete.search(capitalize(input.value)));
@@ -56,9 +56,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // handle form submission
   form.addEventListener('submit', function(e) {
+    let gender = document.querySelector("input:checked").value;
     e.preventDefault();
+    namesList.innerHTML = '';
     document.querySelector('.banner').classList.add('submitted');
-  })
+    createChart('graph', capitalize(input.value), gender);
+  });
   
 });
 
