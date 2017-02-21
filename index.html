@@ -17,17 +17,25 @@
   <div class="banner">
     <div class="banner-content">
       <h1>How have names changed in popularity?</h1>
-      <h3>Explore more than 500 popular names over the past 55 years to see!</h3>
-      <form class="pure-form">
-        <input type="text" placeholder="Enter a name..." class="pure-input-2-3" id="name-input">
-        <button type="submit" class="pure-button button-secondary pure-input-1-6">Sign in</button>
+      <h3>Explore more than 33,000 popular names over the past 55 years to see!</h3>
+      <form class="pure-form" id="name-form">
+        <label for="male" class="pure-radio">
+          <input type="radio" id="male" name="gender" value="male">
+          Boy names
+        </label>
+        <label for="female" class="pure-radio">
+          <input type="radio" id="female" name="gender" value="female" checked>
+          Girl names
+        </label>
+        <input type="text" placeholder="Enter a name..." class="pure-input-1-2" name="name" id="name-input" autocomplete="off">
+        <button type="submit" class="pure-button button-secondary pure-input-1-6">Submit Name</button>
       </form>
+      <div class="pure-menu pure-g">
+        <ul class="pure-menu-list pure-u-1-2" id="name-list">
+        </ul>
+      </div>
     </div>
   </div>
   <script src="bundle.js"></script>
-<!--   <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="assets/js/uniqueNames.js"></script>
-  <script src="vendor/js/awesomeplete.min.js"></script>
-  <script src="assets/js/app.js"></script> -->
 </body>
 </html>

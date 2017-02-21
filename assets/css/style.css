@@ -3,10 +3,10 @@
 }
 
 .button-secondary {
-    color: white;
-    border-radius: 4px;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-    background: rgb(66, 184, 221);
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  background: rgb(66, 184, 221);
 }
 
 .banner {
@@ -37,12 +37,50 @@
   color: #000;
 }
 
+.pure-form .pure-radio {
+  display: inline-block;
+}
+
+.pure-form .pure-button {
+  display: block;
+  margin-top: 10px;
+  margin-left: auto;
+}
+
+#name-list {
+  right:0 ;
+  top: -43px;
+  position: absolute;
+}
+
+#name-list li {
+  height: auto;
+  text-align: left;
+  background-color: #eee;
+  text-shadow: none;
+  text-transform: none;
+}
+
+#name-list li:hover {
+  background-color: #daa9ff;
+  cursor: pointer;
+  text-transform: none;
+}
+
+.pure-menu.pure-g {
+  position: relative;
+}
+
+.hidden {
+  display: none;
+}
+
 @media (max-width: 480px) {
   #name-input {
     display: inline;
   }
 
   #name-input + .pure-button {
-    margin-top: -6px;
+    margin-left: auto;
   }
 }

@@ -2,19 +2,26 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-  d3.json('./state_data.json', function(d) {
-    var names = Object.keys(d.reduce(function(namesObj, state) {
-      ['maleData', 'femaleData'].forEach(function(gender) {
-        state[gender].forEach(function(yearObj) {
-          yearObj.names.forEach(function(nameObj) {
-            namesObj[nameObj.name] = true;
-          });
-        });
-      });
-      return namesObj;
-    }, {}));
+  d3.json('../assets/json/aggregate.json', function(d) {
+    
+    var maleObj = {};
+    var femaleObj = {};
 
-    console.log(names);
+    for (var year in d.maleData) {
+      for (var name in d.maleData[year].names) {
+        maleObj[name] = true;
+      }
+    }
+
+    for (var year in d.femaleData) {
+      for (var name in d.femaleData[year].names) {
+        femaleObj[name] = true;
+      }
+    }
+    
+    var maleNames = Object.keys(maleObj);
+    var femaleNames = Object.keys(femaleObj);
+
   });
 
 });
