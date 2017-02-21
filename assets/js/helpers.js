@@ -37,12 +37,12 @@ function updateNameList(listDiv, names) {
 function createChart(svgId, name, gender) {
 
   const WIDTH = document.getElementById(svgId).parentElement.clientWidth;
-  const HEIGHT = 450;
+  const HEIGHT = 480;
   const PADDING = {
-    BOTTOM: 20,
+    BOTTOM: 60,
     TOP: 20,
     RIGHT: 20,
-    LEFT: 40
+    LEFT: 80
   };
 
   let svg = d3.select(`#${svgId}`)
@@ -89,15 +89,25 @@ function createChart(svgId, name, gender) {
     svg.append("g")
       .attr("transform", `translate(0,${HEIGHT - PADDING.BOTTOM})`)
       .call(d3.axisBottom(xScale).tickFormat(d3.format("")));
-
+    svg.append("text")
+      .attr("x", xScale((X_MAX + X_MIN) / 2))
+      .attr("y", HEIGHT - PADDING.BOTTOM / 3)
+      .style("text-anchor", "middle")
+      .text("Year");
     
     svg.append("g")
       .attr("transform", `translate(${PADDING.LEFT}, 0)`)
       .call(d3.axisLeft(yScale));
+    svg.append("text")
+      .attr("y", PADDING.LEFT / 2)
+      .attr("x", -(HEIGHT - PADDING.BOTTOM) / 2)
+      .attr("transform", "rotate(-90)")
+      .style("text-anchor", "middle")
+      .text(`Babies named ${name} per 100,000 ${gender} births`);
+
 
     // TODO
 
-    // add labels
     // style
     // animate
     // tooltip
