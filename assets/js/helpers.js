@@ -35,8 +35,15 @@ function updateNameList(listDiv, names) {
  * @param {String} gender
  */
 function createChart(svgId, name, gender) {
-  const WIDTH = "100%";
-  const HEIGHT = 400;
+
+  const WIDTH = document.getElementById(svgId).parentElement.clientWidth;
+  const HEIGHT = 450;
+  const PADDING = {
+    BOTTOM: 20,
+    TOP: 20,
+    RIGHT: 20,
+    LEFT: 40
+  };
 
   let svg = d3.select(`#${svgId}`)
     .attr("width", WIDTH)
@@ -54,11 +61,12 @@ function createChart(svgId, name, gender) {
     
     let xScale = d3.scaleLinear()
                   .domain([X_MIN, X_MAX])
-                  .range([0, WIDTH]);
+                  .range([PADDING.LEFT, WIDTH - PADDING.RIGHT]);
     let yScale = d3.scaleLinear()
                   .domain([Y_MIN, Y_MAX])
-                  .range([HEIGHT, 0]);
+                  .range([HEIGHT - PADDING.BOTTOM, PADDING.TOP]);
 
+    // plot points
     svg.selectAll('circle')
       .data(nameData)
       .enter()
@@ -66,6 +74,33 @@ function createChart(svgId, name, gender) {
         .attr('r', 5)
         .attr('cx', d => xScale(d.year))
         .attr('cy', d => yScale(__getBirthsPerCapita(d)));
+
+    svg.selectAll('line')
+      .data(nameData.slice(1))
+      .enter()
+        .append('line')
+        .attr('x1', (d,i) => xScale(nameData[i].year))
+        .attr('y1', (d,i) => yScale(__getBirthsPerCapita(nameData[i])))
+        .attr('x2', (d,i) => xScale(d.year))
+        .attr('y2', (d,i) => yScale(__getBirthsPerCapita(d)))
+        .attr('stroke', 'black');
+
+    // plot axes
+    svg.append("g")
+      .attr("transform", `translate(0,${HEIGHT - PADDING.BOTTOM})`)
+      .call(d3.axisBottom(xScale).tickFormat(d3.format("")));
+
+    
+    svg.append("g")
+      .attr("transform", `translate(${PADDING.LEFT}, 0)`)
+      .call(d3.axisLeft(yScale));
+
+    // TODO
+
+    // add labels
+    // style
+    // animate
+    // tooltip
 
   });
 
