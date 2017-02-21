@@ -25,15 +25,23 @@
   justify-content: center;
   flex-direction: column;
   color: white;
-  transition: height 2s;
+  transition: transform 2s;
 }
 
 .banner.submitted {
-  height: 0;
+  transform: translate(0, -100vh);
 }
 
 .banner.submitted .banner-content {
   opacity: 0;
+}
+
+#results {
+  transition: transform 2s;
+}
+
+#results.submitted {
+  transform: translate(0, -100vh);
 }
 
 .banner-content {

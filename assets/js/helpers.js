@@ -57,8 +57,8 @@ function createChart(svgId, name, gender) {
               .attr('class', 'tooltip')
               .html(d => `
                 <p>Year: ${d.year}</p>
-                <p>${name} Total: ${d.count}</p>
-                <p>Birth Total: ${__getBirthsPerCapita(d).toFixed(2)}</p>
+                <p>${name} Total: ${d3.format(",")(d.count)}</p>
+                <p>Birth Total: ${d3.format(",")(d.totalBirths)}</p>
               `);
               
   svg.call(tip);
@@ -79,7 +79,7 @@ function createChart(svgId, name, gender) {
     let yScale = d3.scaleLinear()
                   .domain([Y_MIN, Y_MAX])
                   .range([HEIGHT - PADDING.BOTTOM, PADDING.TOP]);
-
+    
     // plot points
     svg.selectAll('circle')
       .data(nameData)
@@ -94,8 +94,8 @@ function createChart(svgId, name, gender) {
         .on('mouseout', tip.hide)
         .on('touchup', tip.hide)
       .transition()
-        .delay((d, i) => 1000 + 50 * i)
-        .duration(50)
+        .delay((d, i) => 1000 + 20 * i)
+        .duration(20)
         .style('opacity', 1)
 
     svg.selectAll('line')
@@ -109,33 +109,50 @@ function createChart(svgId, name, gender) {
           .attr('stroke', 'black')
           .style('opacity', 0)
         .transition()
-          .delay((d, i) => 1000 + 50 * i)
-          .duration(50)
+          .delay((d, i) => 1000 + 20 * i)
+          .duration(20)
           .style('opacity', 1)
 
     // plot axes
     svg.append("g")
       .attr("transform", `translate(0,${HEIGHT - PADDING.BOTTOM})`)
-      .call(d3.axisBottom(xScale).tickFormat(d3.format("")));
+      .call(d3.axisBottom(xScale).tickFormat(d3.format("")))
+      .style('opacity', 0)
+      .transition()
+        .duration(1000)
+        .style('opacity', 1)
+
     svg.append("text")
       .attr("x", xScale((X_MAX + X_MIN) / 2))
       .attr("y", HEIGHT - PADDING.BOTTOM / 3)
       .style("text-anchor", "middle")
-      .text("Year");
+      .text("Year")
+      .style('opacity', 0)
+      .transition()
+        .duration(1000)
+        .style('opacity', 1)
     
     svg.append("g")
       .attr("transform", `translate(${PADDING.LEFT}, 0)`)
-      .call(d3.axisLeft(yScale));
+      .call(d3.axisLeft(yScale))
+      .style('opacity', 0)
+      .transition()
+        .duration(1000)
+        .style('opacity', 1)
+
     svg.append("text")
       .attr("y", PADDING.LEFT / 2)
       .attr("x", -(HEIGHT - PADDING.BOTTOM) / 2)
       .attr("transform", "rotate(-90)")
       .style("text-anchor", "middle")
-      .text(`Babies named ${name} per 100,000 ${gender} births`);
+      .text(`Babies named ${name} per 100,000 ${gender} births`)
+      .style('opacity', 0)
+      .transition()
+        .duration(1000)
+        .style('opacity', 1)
 
     // TODO
 
-    // tooltip
     // style
 
   });

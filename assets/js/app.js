@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
     e.preventDefault();
     namesList.innerHTML = '';
     document.querySelector('.banner').classList.add('submitted');
+    document.getElementById('results').classList.add('submitted');
     createChart('graph', capitalize(input.value), gender);
   });
   
