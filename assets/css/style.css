@@ -1,5 +1,18 @@
+body {
+  overflow-y: hidden;
+}
+
 .pure-menu-horizontal {
   background-color: #daa9ff;
+}
+
+.pure-menu-horizontal .pure-menu-heading {
+  font-family: 'Lobster', cursive, sans-serif;
+  text-transform: none;
+  text-align: center;
+  display: block;
+  color: #fff;
+  font-size: 1.5em;
 }
 
 .button-secondary {
@@ -10,7 +23,7 @@
 }
 
 .banner {
-  height: calc(100vh - 34px);
+  height: calc(100vh - 54px);
   background-image: linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0.3)), url('../images/baby-hero.jpg');
   background-repeat: no-repeat;
   background-position: left top; 
@@ -26,6 +39,8 @@
   flex-direction: column;
   color: white;
   transition: transform 2s;
+  position: relative;
+  z-index: 100;
 }
 
 .banner.submitted {
@@ -38,10 +53,12 @@
 
 #results {
   transition: transform 2s;
+  display: none;
 }
 
 #results.submitted {
-  transform: translate(0, -100vh);
+  display: block;
+  transform: translate(0, -98vh);
 }
 
 .banner-content {
@@ -94,7 +111,28 @@
 }
 
 .tooltip {
-  pointer-events: none;
+  pointer-events: none !important;
+  background-color: #CCC;
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px solid #daa9ff;
+}
+
+.tooltip p {
+  margin: 3px;
+}
+
+.male {
+  color: #2D7355;
+}
+
+.female {
+  color: #A95706;
+}
+
+.pure-u-1 h1 {
+  text-align: center;
+  margin: 60px auto 20px;
 }
 
 @media (max-width: 480px) {

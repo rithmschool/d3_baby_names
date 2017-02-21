@@ -56,8 +56,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // handle form submission
   form.addEventListener('submit', function(e) {
-    let gender = document.querySelector("input:checked").value;
     e.preventDefault();
+    
+    let gender = document.querySelector("input:checked").value;
+    let name = capitalize(input.value);
+    document.getElementById("name-header").innerText = name;
     namesList.innerHTML = '';
     document.querySelector('.banner').classList.add('submitted');
     document.getElementById('results').classList.add('submitted');

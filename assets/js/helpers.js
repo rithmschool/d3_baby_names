@@ -44,7 +44,7 @@ function createChart(svgId, name, gender) {
   const PADDING = {
     BOTTOM: 60,
     TOP: 20,
-    RIGHT: 20,
+    RIGHT: 80,
     LEFT: 80
   };
 
@@ -56,15 +56,16 @@ function createChart(svgId, name, gender) {
   let tip = d3.tip()
               .attr('class', 'tooltip')
               .html(d => `
-                <p>Year: ${d.year}</p>
-                <p>${name} Total: ${d3.format(",")(d.count)}</p>
-                <p>Birth Total: ${d3.format(",")(d.totalBirths)}</p>
+                <p>Year: <b class=${gender}>${d.year}</b></p>
+                <p>${name} Total: <b class=${gender}>${d3.format(",")(d.count)}</b></p>
+                <p>Birth Total: <b class=${gender}>${d3.format(",")(d.totalBirths)}</b></p>
               `);
               
   svg.call(tip);
 
   d3.json("./assets/json/aggregate.json", function(d) {
     let data = d[gender === "male" ? 'maleData' : 'femaleData'];
+    let color = gender === "male" ? "#79BFA1" : "#F5A352";
     let nameData = __getDataByName(data, name);
 
     // set up axes and scales
@@ -81,13 +82,30 @@ function createChart(svgId, name, gender) {
                   .range([HEIGHT - PADDING.BOTTOM, PADDING.TOP]);
     
     // plot points
+    svg.selectAll('line')
+      .data(nameData.slice(1))
+      .enter()
+        .append('line')
+          .attr('x1', (d,i) => xScale(nameData[i].year))
+          .attr('y1', (d,i) => yScale(__getBirthsPerCapita(nameData[i])))
+          .attr('x2', (d,i) => xScale(d.year))
+          .attr('y2', (d,i) => yScale(__getBirthsPerCapita(d)))
+          .attr('stroke', color)
+          .attr('stroke-width', '2px')
+          .style('opacity', 0)
+        .transition()
+          .delay((d, i) => 1000 + 20 * i)
+          .duration(20)
+          .style('opacity', 1)
+
     svg.selectAll('circle')
       .data(nameData)
       .enter()
       .append('circle')
-        .attr('r', 5)
+        .attr('r', 6)
         .attr('cx', d => xScale(d.year))
         .attr('cy', d => yScale(__getBirthsPerCapita(d)))
+        .attr('fill', color)
         .style('opacity', 0)
         .on('mouseover', tip.show)
         .on('touchstart', tip.show)
@@ -97,21 +115,6 @@ function createChart(svgId, name, gender) {
         .delay((d, i) => 1000 + 20 * i)
         .duration(20)
         .style('opacity', 1)
-
-    svg.selectAll('line')
-      .data(nameData.slice(1))
-      .enter()
-        .append('line')
-          .attr('x1', (d,i) => xScale(nameData[i].year))
-          .attr('y1', (d,i) => yScale(__getBirthsPerCapita(nameData[i])))
-          .attr('x2', (d,i) => xScale(d.year))
-          .attr('y2', (d,i) => yScale(__getBirthsPerCapita(d)))
-          .attr('stroke', 'black')
-          .style('opacity', 0)
-        .transition()
-          .delay((d, i) => 1000 + 20 * i)
-          .duration(20)
-          .style('opacity', 1)
 
     // plot axes
     svg.append("g")
