@@ -53,6 +53,12 @@ document.addEventListener('DOMContentLoaded', function() {
       updateNameList(namesList, currentAutocomplete.search(capitalize(input.value)));
     }
   });
+
+  // handle form submission
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    document.querySelector('.banner').classList.add('submitted');
+  })
   
 });
 

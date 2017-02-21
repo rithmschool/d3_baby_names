@@ -10,10 +10,10 @@
 }
 
 .banner {
-  height: 400px;
+  height: calc(100vh - 34px);
   background-image: linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0.3)), url('../images/baby-hero.jpg');
   background-repeat: no-repeat;
-  background-position: left -300px; 
+  background-position: left top; 
   background-attachment: fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -25,12 +25,22 @@
   justify-content: center;
   flex-direction: column;
   color: white;
+  transition: height 2s;
+}
+
+.banner.submitted {
+  height: 0;
+}
+
+.banner.submitted .banner-content {
+  opacity: 0;
 }
 
 .banner-content {
   text-align: right;
   margin-right: 30px;
   text-shadow: 0 0 10px #333;
+  transition: opacity 2s;
 }
 
 .banner-content input {
