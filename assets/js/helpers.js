@@ -1,4 +1,7 @@
 import * as d3 from "d3";
+import d3Tip from "d3-tip";
+
+d3.tip = d3Tip;
 
 /**
  * Capitalize a string
@@ -49,6 +52,17 @@ function createChart(svgId, name, gender) {
     .attr("width", WIDTH)
     .attr("height", HEIGHT);
 
+  // set up tooltip
+  let tip = d3.tip()
+              .attr('class', 'tooltip')
+              .html(d => `
+                <p>Year: ${d.year}</p>
+                <p>${name} Total: ${d.count}</p>
+                <p>Birth Total: ${__getBirthsPerCapita(d).toFixed(2)}</p>
+              `);
+              
+  svg.call(tip);
+
   d3.json("./assets/json/aggregate.json", function(d) {
     let data = d[gender === "male" ? 'maleData' : 'femaleData'];
     let nameData = __getDataByName(data, name);
@@ -75,6 +89,10 @@ function createChart(svgId, name, gender) {
         .attr('cx', d => xScale(d.year))
         .attr('cy', d => yScale(__getBirthsPerCapita(d)))
         .style('opacity', 0)
+        .on('mouseover', tip.show)
+        .on('touchstart', tip.show)
+        .on('mouseout', tip.hide)
+        .on('touchup', tip.hide)
       .transition()
         .delay((d, i) => 1000 + 50 * i)
         .duration(50)
@@ -115,11 +133,10 @@ function createChart(svgId, name, gender) {
       .style("text-anchor", "middle")
       .text(`Babies named ${name} per 100,000 ${gender} births`);
 
-
     // TODO
 
-    // style
     // tooltip
+    // style
 
   });
 

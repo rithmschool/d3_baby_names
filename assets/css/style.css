@@ -85,6 +85,10 @@
   display: none;
 }
 
+.tooltip {
+  pointer-events: none;
+}
+
 @media (max-width: 480px) {
   #name-input {
     display: inline;
