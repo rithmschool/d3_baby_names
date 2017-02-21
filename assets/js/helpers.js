@@ -73,17 +73,27 @@ function createChart(svgId, name, gender) {
       .append('circle')
         .attr('r', 5)
         .attr('cx', d => xScale(d.year))
-        .attr('cy', d => yScale(__getBirthsPerCapita(d)));
+        .attr('cy', d => yScale(__getBirthsPerCapita(d)))
+        .style('opacity', 0)
+      .transition()
+        .delay((d, i) => 1000 + 50 * i)
+        .duration(50)
+        .style('opacity', 1)
 
     svg.selectAll('line')
       .data(nameData.slice(1))
       .enter()
         .append('line')
-        .attr('x1', (d,i) => xScale(nameData[i].year))
-        .attr('y1', (d,i) => yScale(__getBirthsPerCapita(nameData[i])))
-        .attr('x2', (d,i) => xScale(d.year))
-        .attr('y2', (d,i) => yScale(__getBirthsPerCapita(d)))
-        .attr('stroke', 'black');
+          .attr('x1', (d,i) => xScale(nameData[i].year))
+          .attr('y1', (d,i) => yScale(__getBirthsPerCapita(nameData[i])))
+          .attr('x2', (d,i) => xScale(d.year))
+          .attr('y2', (d,i) => yScale(__getBirthsPerCapita(d)))
+          .attr('stroke', 'black')
+          .style('opacity', 0)
+        .transition()
+          .delay((d, i) => 1000 + 50 * i)
+          .duration(50)
+          .style('opacity', 1)
 
     // plot axes
     svg.append("g")
@@ -109,7 +119,6 @@ function createChart(svgId, name, gender) {
     // TODO
 
     // style
-    // animate
     // tooltip
 
   });
