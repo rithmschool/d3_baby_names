@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import d3Tip from "d3-tip";
+import * as topojson from "topojson";
 
 d3.tip = d3Tip;
 
@@ -154,14 +155,57 @@ function createChart(svgId, name, gender) {
         .duration(1000)
         .style('opacity', 1)
 
-    // TODO
-
-    // style
-
   });
 
 }
 
+/**
+ * Add a d3 map to a given SVG id for a specific name and gender
+ *
+ * @param {String} svgId
+ * @param {String} name
+ * @param {String} gender
+ */
+function createMap(svgId, name, gender) {
+
+  const WIDTH = document.getElementById(svgId).parentElement.clientWidth;
+  const HEIGHT = 480;
+  const PADDING = WIDTH / 1000 * 80
+  const MAP_RATIO = 1000 / 583;
+  const MAP_HEIGHT = WIDTH / MAP_RATIO;
+
+  let svg = d3.select(`#${svgId}`)
+    .attr("width", WIDTH)
+    .attr("height", HEIGHT);
+
+  let path = d3.geoPath()
+
+  d3.queue()
+    .defer(d3.json, 'https://d3js.org/us-10m.v1.json')
+    .defer(d3.tsv, 'https://gist.githubusercontent.com/mbostock/4090846/raw/07e73f3c2d21558489604a0bc434b3a5cf41a867/us-state-names.tsv')
+    .await(function(error, d1, d2) {
+      if (error) alert(error);
+
+      // clean up mapping data
+      let stateTopoJSONData = topojson.feature(d1, d1.objects.states).features;
+      stateTopoJSONData.forEach(function(state) {
+        let foundState = d2.find(s => s.id === state.id.replace(/^0/,""))
+        state.properties.code = foundState.code;
+      });
+
+      svg.append("g")
+        .selectAll('path')
+        .data(stateTopoJSONData)
+        .enter()
+          .append("path")
+          .attr("d", path)
+          .style("transform", `translate(${PADDING}px, ${(HEIGHT - MAP_HEIGHT) / 2}px) scale(${(WIDTH - PADDING) / 1000})`)
+          .style("stroke", "#000")
+          .style("stroke-width", "1")
+          .style("fill", "#fff")
+
+    });
+}
 /**
  * Get data for a single name given an object of data, suitable for d3
  *
@@ -200,4 +244,4 @@ function __getBirthsPerCapita(yearObj) {
   return yearObj.count / yearObj.totalBirths * 1e5;
 }
 
-export { capitalize, updateNameList, createChart };
+export { capitalize, updateNameList, createChart, createMap };
