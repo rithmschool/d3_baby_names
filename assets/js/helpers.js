@@ -56,75 +56,29 @@ function createChart(svgId, name, gender) {
     .attr("width", WIDTH)
     .attr("height", HEIGHT);
 
-  // set up tooltip
-  let tip = d3.tip()
-              .attr('class', 'tooltip')
-              .html(d => `
-                <p>Aggregate Data</p>
-                <p>Year: <b class=${gender}>${d.year}</b></p>
-                <p>${name} Total: <b class=${gender}>${d3.format(",")(d.count)}</b></p>
-                <p>Birth Total: <b class=${gender}>${d3.format(",")(d.totalBirths)}</b></p>
-              `);
-              
-  svg.call(tip);
-
   d3.json("./assets/json/aggregate.json", function(d) {
     let data = d[gender === "male" ? 'maleData' : 'femaleData'];
     let color = gender === "male" ? "#79BFA1" : "#F5A352";
     let nameData = __getDataByName(data, name);
 
     // set up axes and scales
-    const X_MIN = d3.min(nameData, d => d.year)
-    const X_MAX = d3.max(nameData, d => d.year)    
-    const Y_MIN = d3.min(nameData, __getBirthsPerCapita);
-    const Y_MAX = d3.max(nameData, __getBirthsPerCapita);
-    
-    let xScale = d3.scaleLinear()
-                  .domain([X_MIN, X_MAX])
-                  .range([PADDING.LEFT, WIDTH - PADDING.RIGHT]);
-    let yScale = d3.scaleLinear()
-                  .domain([Y_MIN, Y_MAX])
-                  .range([HEIGHT - PADDING.BOTTOM, PADDING.TOP]);
-    
-    let plotGroup = svg.append("g")
-                      .attr("class", "aggregate plot");
-    // plot points
-    plotGroup.selectAll('line')
-      .data(nameData.slice(1))
-      .enter()
-        .append('line')
-          .attr('x1', (d,i) => xScale(nameData[i].year))
-          .attr('y1', (d,i) => yScale(__getBirthsPerCapita(nameData[i])))
-          .attr('x2', (d,i) => xScale(d.year))
-          .attr('y2', (d,i) => yScale(__getBirthsPerCapita(d)))
-          .attr('stroke', color)
-          .attr('stroke-width', '2px')
-          .attr('class', 'segment')
-          .style('opacity', 0)
-        .transition()
-          .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
-          .duration(ANIMATION_STEP)
-          .style('opacity', 1)
+    let xScale = __createScale(
+      d3.min(nameData, d => d.year),
+      d3.max(nameData, d => d.year),
+      PADDING.LEFT,
+      WIDTH - PADDING.RIGHT
+    );
 
-    plotGroup.selectAll('circle')
-      .data(nameData)
-      .enter()
-      .append('circle')
-        .attr('r', 6)
-        .attr('cx', d => xScale(d.year))
-        .attr('cy', d => yScale(__getBirthsPerCapita(d)))
-        .attr('fill', color)
-        .style('opacity', 0)
-        .on('mouseover', tip.show)
-        .on('touchstart', tip.show)
-        .on('mouseout', tip.hide)
-        .on('touchup', tip.hide)
-      .transition()
-        .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
-        .duration(ANIMATION_STEP)
-        .style('opacity', 1)
+    let yScale = __createScale(
+      d3.min(nameData, __getBirthsPerCapita),
+      d3.max(nameData, __getBirthsPerCapita),
+      HEIGHT - PADDING.BOTTOM,
+      PADDING.TOP
+    );
+    
+    __createPlot(nameData, 'aggregate', gender, name, color, xScale, yScale);
 
-    // plot axes
+    // create and plot axes
     svg.append("g")
       .attr("class", "x-axis")
       .attr("transform", `translate(0,${HEIGHT - PADDING.BOTTOM})`)
@@ -135,7 +89,7 @@ function createChart(svgId, name, gender) {
         .style('opacity', 1)
 
     svg.append("text")
-      .attr("x", xScale((X_MAX + X_MIN) / 2))
+      .attr("x", xScale((xScale.domain()[1] + xScale.domain()[0]) / 2))
       .attr("y", HEIGHT - PADDING.BOTTOM / 3)
       .style("text-anchor", "middle")
       .text("Year")
@@ -283,6 +237,72 @@ function __getBirthsPerCapita(yearObj) {
 }
 
 /**
+ * Create line plot on the graph SVG, given the data,
+ * abbreviation, gender, name, color, and scales
+ *
+ * @param {Object} data
+ * @param {String} abbreviation
+ * @param {String} gender
+ * @param {String} name
+ * @param {String} color
+ * @param {Function} xScale
+ * @param {Function} yScale
+ */
+function __createPlot(data, abbreviation, gender, name, color, xScale, yScale) {
+  
+  let tip = d3.tip()
+              .attr('class', 'tooltip')
+              .html(d => `
+                <p>${abbreviation[0].toUpperCase() + abbreviation.slice(1)} Data</p>
+                <p>Year: <b class=${gender}>${d.year}</b></p>
+                <p>${name} Total: <b class=${gender}>${d3.format(",")(d.count)}</b></p>
+                <p>Birth Total: <b class=${gender}>${d3.format(",")(d.totalBirths)}</b></p>
+              `);
+              
+  d3.select("#graph").call(tip);
+
+  // set up axes and scales
+  
+  let plotGroup = d3.select("#graph").append("g")
+                    .attr("class", `${abbreviation} plot`);
+  // plot points
+  plotGroup.selectAll('line')
+    .data(data.slice(1))
+    .enter()
+      .append('line')
+        .attr('x1', (d,i) => xScale(data[i].year))
+        .attr('y1', (d,i) => yScale(__getBirthsPerCapita(data[i])))
+        .attr('x2', (d,i) => xScale(d.year))
+        .attr('y2', (d,i) => yScale(__getBirthsPerCapita(d)))
+        .attr('stroke', color)
+        .attr('stroke-width', '2px')
+        .attr('class', 'segment')
+        .style('opacity', 0)
+      .transition()
+        .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
+        .duration(ANIMATION_STEP)
+        .style('opacity', 1)
+
+  plotGroup.selectAll('circle')
+    .data(data)
+    .enter()
+    .append('circle')
+      .attr('r', 6)
+      .attr('cx', d => xScale(d.year))
+      .attr('cy', d => yScale(__getBirthsPerCapita(d)))
+      .attr('fill', color)
+      .style('opacity', 0)
+      .on('mouseover', tip.show)
+      .on('touchstart', tip.show)
+      .on('mouseout', tip.hide)
+      .on('touchup', tip.hide)
+    .transition()
+      .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
+      .duration(ANIMATION_STEP)
+      .style('opacity', 1)
+}
+
+/**
  * Plot state data for a particular name, given a state abbreviation,
  * color, name, and gender
  *
@@ -291,40 +311,29 @@ function __getBirthsPerCapita(yearObj) {
 function __plotStateData(abbreviation, color, name, gender) {
   const WIDTH = document.getElementById('graph').parentElement.clientWidth;
   const HEIGHT = 480;
+  
   let svg = d3.select("#graph");
 
   d3.json(`./assets/json/${abbreviation}.json`, function(d) {
-    let stateName = d.stateName
-    let tip = d3.tip()
-                .attr('class', 'tooltip')
-                .style("border", `2px solid ${color}` )
-                .html(d => `
-                  <p>${stateName} Data</p>
-                  <p>Year: <b class=${gender}>${d.year}</b></p>
-                  <p>${name} Total: <b class=${gender}>${d3.format(",")(d.count)}</b></p>
-                  <p>Birth Total: <b class=${gender}>${d3.format(",")(d.totalBirths)}</b></p>
-                `);
-                
-    svg.call(tip);
 
     let data = d[gender === "male" ? 'maleData' : 'femaleData'];
-
     let nameData = __getDataByName(data, name);
     let allData = nameData.concat(d3.selectAll("circle").data());
-
-    // set up axes and scales
-    const X_MIN = d3.min(nameData, d => d.year)
-    const X_MAX = d3.max(nameData, d => d.year)    
-    const Y_MIN = d3.min(allData, __getBirthsPerCapita);
-    const Y_MAX = d3.max(allData, __getBirthsPerCapita);
     
-    let xScale = d3.scaleLinear()
-                  .domain([X_MIN, X_MAX])
-                  .range([PADDING.LEFT, WIDTH - PADDING.RIGHT]);
+    let xScale = __createScale(
+      d3.min(nameData, d => d.year),
+      d3.max(nameData, d => d.year),
+      PADDING.LEFT,
+      WIDTH - PADDING.RIGHT
+    );
 
-    let yScale = d3.scaleLinear()
-                  .domain([Y_MIN, Y_MAX])
-                  .range([HEIGHT - PADDING.BOTTOM, PADDING.TOP]);
+    let yScale = __createScale(
+      d3.min(allData, __getBirthsPerCapita),
+      d3.max(allData, __getBirthsPerCapita),
+      HEIGHT - PADDING.BOTTOM,
+      PADDING.TOP
+    );
+
     // update axes
     svg.select(".y-axis")
       .transition(1000)
@@ -348,43 +357,8 @@ function __plotStateData(abbreviation, color, name, gender) {
     });
 
     // plot new points
-    let newPlotGroup = svg.append("g")
-                          .attr("class", `${abbreviation} plot`)
+    __createPlot(nameData, d.abbreviation, gender, name, color, xScale, yScale);
 
-    newPlotGroup.selectAll('line')
-      .data(nameData.slice(1))
-      .enter()
-        .append('line')
-          .attr('x1', (d,i) => xScale(nameData[i].year))
-          .attr('y1', (d,i) => yScale(__getBirthsPerCapita(nameData[i])))
-          .attr('x2', (d,i) => xScale(d.year))
-          .attr('y2', (d,i) => yScale(__getBirthsPerCapita(d)))
-          .attr('stroke', color)
-          .attr('stroke-width', '2px')
-          .style('opacity', 0)
-          .attr('class', 'segment')
-        .transition()
-          .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
-          .duration(ANIMATION_STEP)
-          .style('opacity', 1)
-
-    newPlotGroup.selectAll('circle')
-      .data(nameData)
-      .enter()
-      .append('circle')
-        .attr('r', 6)
-        .attr('cx', d => xScale(d.year))
-        .attr('cy', d => yScale(__getBirthsPerCapita(d)))
-        .attr('fill', color)
-        .style('opacity', 0)
-        .on('mouseover', tip.show)
-        .on('touchstart', tip.show)
-        .on('mouseout', tip.hide)
-        .on('touchup', tip.hide)
-      .transition()
-        .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
-        .duration(ANIMATION_STEP)
-        .style('opacity', 1)
   });
 }
 
@@ -447,6 +421,20 @@ function __removeStateData(abbreviation) {
       }
     });
   });
+}
+
+/**
+ * Create a d3 linear scale, given the min and max for the domain and range
+ *
+ * @param {Number} dMin
+ * @param {Number} dMax
+ * @param {Number} rMin
+ * @param {Number} rMax
+ */
+function __createScale(dMin,dMax,rMin,rMax) {
+  return d3.scaleLinear()
+          .domain([dMin, dMax])
+          .range([rMin, rMax]);
 }
 
 /**
