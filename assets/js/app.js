@@ -70,3 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
 });
+
+// TODO
+// add remove functionality when clicking on a highlighted state
+// refactor point plotting functions 

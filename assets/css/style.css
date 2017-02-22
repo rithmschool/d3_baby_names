@@ -118,6 +118,7 @@ body {
   padding: 15px;
   border-radius: 8px;
   border: 2px solid #daa9ff;
+  z-index: 100;
 }
 
 .tooltip p {
