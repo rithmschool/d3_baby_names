@@ -72,5 +72,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // TODO
-// add remove functionality when clicking on a highlighted state
+
 // refactor point plotting functions 
+// add social share buttons
+// add source link for data
+// check responsiveness

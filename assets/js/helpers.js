@@ -11,6 +11,9 @@ const PADDING = {
   LEFT: 80
 };
 
+const ANIMATION_DELAY = 1000;
+const ANIMATION_STEP = 20;
+
 /**
  * Capitalize a string
  *
@@ -99,8 +102,8 @@ function createChart(svgId, name, gender) {
           .attr('class', 'segment')
           .style('opacity', 0)
         .transition()
-          .delay((d, i) => 1000 + 20 * i)
-          .duration(20)
+          .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
+          .duration(ANIMATION_STEP)
           .style('opacity', 1)
 
     plotGroup.selectAll('circle')
@@ -117,8 +120,8 @@ function createChart(svgId, name, gender) {
         .on('mouseout', tip.hide)
         .on('touchup', tip.hide)
       .transition()
-        .delay((d, i) => 1000 + 20 * i)
-        .duration(20)
+        .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
+        .duration(ANIMATION_STEP)
         .style('opacity', 1)
 
     // plot axes
@@ -225,15 +228,18 @@ function createMap(svgId, name, gender) {
           }
         })
         .on("click", function(d) {
-          if (d.clicked) {
-            d3.select(this).style("fill", mainColor);
-            // remove state data
-          } else {
+          let thisState = d3.select(this);
+          let plotExists = d3.select(`.${d.properties.code}.plot`).nodes().length > 0;
+          if (d.clicked && plotExists) {
+            thisState.style("fill", mainColor);
+            __removeStateData(d.properties.code);
+            d.clicked = false;
+          } else if (!d.clicked && !plotExists) {
             let color = __getRandomHex();
             __plotStateData(d.properties.code, color, name, gender);
-            d3.select(this).style("fill", color);
+            thisState.style("fill", color);
+            d.clicked = true;
           }
-          d.clicked = !d.clicked;
         });
 
     });
@@ -358,8 +364,8 @@ function __plotStateData(abbreviation, color, name, gender) {
           .style('opacity', 0)
           .attr('class', 'segment')
         .transition()
-          .delay((d, i) => 1000 + 20 * i)
-          .duration(20)
+          .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
+          .duration(ANIMATION_STEP)
           .style('opacity', 1)
 
     newPlotGroup.selectAll('circle')
@@ -376,9 +382,70 @@ function __plotStateData(abbreviation, color, name, gender) {
         .on('mouseout', tip.hide)
         .on('touchup', tip.hide)
       .transition()
-        .delay((d, i) => 1000 + 20 * i)
-        .duration(20)
+        .delay((d, i) => ANIMATION_DELAY + ANIMATION_STEP * i)
+        .duration(ANIMATION_STEP)
         .style('opacity', 1)
+  });
+}
+
+/**
+ * Remove state data plot given a state abbreviation
+ *
+ * @param {String} abbreviation
+ */
+function __removeStateData(abbreviation) {
+  const HEIGHT = 480;
+
+  let stateGroup = d3.select(`.${abbreviation}.plot`);
+  let circles = stateGroup.selectAll('circle');
+  let lines = stateGroup.selectAll('line');
+  let totalLength = 2 * circles.nodes().length - 1;
+
+  [lines, circles].forEach(function(g) {
+    g.data([])
+    .exit()
+    .transition()
+      .delay((d,i) => ANIMATION_STEP * (g.nodes().length - 1 - i))
+      .duration(ANIMATION_STEP)
+      .style('opacity', 0)
+    .remove()
+    .on('end', function() {
+      if (--totalLength === 0) {
+        stateGroup.remove();
+
+        let allData = d3.selectAll("circle").data();
+
+        //   // set up axes and scales
+        const Y_MIN = d3.min(allData, __getBirthsPerCapita);
+        const Y_MAX = d3.max(allData, __getBirthsPerCapita);
+
+        let yScale = d3.scaleLinear()
+                      .domain([Y_MIN, Y_MAX])
+                      .range([HEIGHT - PADDING.BOTTOM, PADDING.TOP]);
+
+        // update axes
+        d3.select(".y-axis")
+          .transition(1000)
+            .call(d3.axisLeft(yScale))
+
+        // update existing points
+        d3.selectAll('.plot').nodes().forEach(function(group) {
+
+          let dGroup = d3.select(group);
+          let stateData = dGroup.selectAll('circle').data();
+
+          dGroup.selectAll('.segment')
+            .data(stateData.slice(1))
+            .transition(1000)
+              .attr('y1', (d,i) => yScale(__getBirthsPerCapita(stateData[i])))
+              .attr('y2', d => yScale(__getBirthsPerCapita(d)))
+          
+          dGroup.selectAll('circle')
+            .transition(1000)
+              .attr('cy', d => yScale(__getBirthsPerCapita(d)))
+        });
+      }
+    });
   });
 }
 
