@@ -88,7 +88,6 @@ body {
   right:0 ;
   top: -43px;
   position: absolute;
-  overflow-y: hidden;
 }
 
 #name-list li {
