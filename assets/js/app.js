@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let gender = document.querySelector("input:checked").value;
     let name = capitalize(input.value);
-    document.getElementById("name-header").innerText = name;
+    document.getElementById("name-header").innerText = name || "NO NAME ENTERED";
     namesList.innerHTML = '';
     document.querySelector('.banner').classList.add('submitted');
     document.getElementById('results').classList.add('submitted');
@@ -70,10 +70,3 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
 });
-
-// TODO
-
-// refactor point plotting functions 
-// add social share buttons
-// add source link for data
-// check responsiveness
