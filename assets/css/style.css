@@ -4,6 +4,8 @@ body {
 
 .pure-menu-horizontal {
   background-color: #daa9ff;
+  position: relative;
+  z-index: 1;
 }
 
 .pure-menu-horizontal .pure-menu-heading {
@@ -128,6 +130,10 @@ body {
 
 .female {
   color: #A95706;
+}
+
+.state:hover {
+  cursor: pointer;
 }
 
 .pure-u-1 h1 {

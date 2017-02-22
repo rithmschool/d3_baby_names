@@ -174,6 +174,8 @@ function createMap(svgId, name, gender) {
   const MAP_RATIO = 1000 / 583;
   const MAP_HEIGHT = WIDTH / MAP_RATIO;
 
+  let lightColor = gender === "male" ? "#C6FFEE" : "#FFD685";
+  let mainColor = gender === "male" ? "#79BFA1" : "#F5A352";
   let svg = d3.select(`#${svgId}`)
     .attr("width", WIDTH)
     .attr("height", HEIGHT);
@@ -198,11 +200,35 @@ function createMap(svgId, name, gender) {
         .data(stateTopoJSONData)
         .enter()
           .append("path")
+          .attr("class", "state")
           .attr("d", path)
           .style("transform", `translate(${PADDING}px, ${(HEIGHT - MAP_HEIGHT) / 2}px) scale(${(WIDTH - PADDING) / 1000})`)
           .style("stroke", "#000")
           .style("stroke-width", "1")
-          .style("fill", "#fff")
+          .style("fill", lightColor)
+
+      d3.selectAll(".state")
+        .on("mouseover", function(d) {
+          if (!d.clicked) {
+            d3.select(this).style("fill", mainColor);
+          }
+        })
+        .on("mouseout", function(d) {
+          if (!d.clicked) {
+            d3.select(this).style("fill", lightColor);
+          }
+        })
+        .on("click", function(d) {
+          if (d.clicked) {
+            d3.select(this).style("fill", mainColor);
+            // remove state data
+          } else {
+            let color = __getRandomHex();
+            __plotStateData(d.properties.code, color, name);
+            d3.select(this).style("fill", color);
+          }
+          d.clicked = !d.clicked;
+        });
 
     });
 }
@@ -242,6 +268,30 @@ function __getBirthCountByYear(data, year) {
  */
 function __getBirthsPerCapita(yearObj) {
   return yearObj.count / yearObj.totalBirths * 1e5;
+}
+
+/**
+ * Plot state data for a particular name, given a state abbreviation,
+ * color, and name
+ *
+ * @param {String} abbreviation
+ */
+function __plotStateData(abbreviation, color, name) {
+  
+}
+
+/**
+ * Return a random hex code
+ *
+ */
+function __getRandomHex() {
+  let chars = "0123456789ABCDEF";
+  let color = "#"
+  for (var i = 0; i < 6; i++) {
+    let randIdx = Math.floor(chars.length * Math.random());
+    color += chars[randIdx];
+  }
+  return color;
 }
 
 export { capitalize, updateNameList, createChart, createMap };
