@@ -13,6 +13,11 @@ const PADDING = {
 
 const ANIMATION_DELAY = 1000;
 const ANIMATION_STEP = 20;
+const colors = {
+  male: "#79BFA1",
+  female: "#F5A352",
+  all: "#8E5DB3"
+};
 
 /**
  * Capitalize a string
@@ -57,10 +62,9 @@ function createChart(svgId, name, gender) {
     .attr("height", HEIGHT);
 
   d3.json("./assets/json/aggregate.json", function(d) {
-    let data = d[gender === "male" ? 'maleData' : 'femaleData'];
-    let color = gender === "male" ? "#79BFA1" : "#F5A352";
-    let nameData = __getDataByName(data, name);
-
+    let color = colors[gender];
+    let nameData = __getDataByName(d, name, gender);
+    debugger
     // set up axes and scales
     let xScale = __createScale(
       d3.min(nameData, d => d.year),
@@ -112,7 +116,7 @@ function createChart(svgId, name, gender) {
       .attr("x", -(HEIGHT - PADDING.BOTTOM) / 2)
       .attr("transform", "rotate(-90)")
       .style("text-anchor", "middle")
-      .text(`Babies named ${name} per 100,000 ${gender} births`)
+      .text(`Babies named ${name} per 100,000 ${gender === 'all' ? '' : gender} births`)
       .style('opacity', 0)
       .transition()
         .duration(1000)
@@ -136,9 +140,14 @@ function createMap(svgId, name, gender) {
   const PADDING = WIDTH / 1000 * 80
   const MAP_RATIO = 1000 / 583;
   const MAP_HEIGHT = WIDTH / MAP_RATIO;
+  const lightColors = {
+    male: "#C6FFEE",
+    female: "#FFD685",
+    all: "#DAA9FF"
+  }
 
-  let lightColor = gender === "male" ? "#C6FFEE" : "#FFD685";
-  let mainColor = gender === "male" ? "#79BFA1" : "#F5A352";
+  let lightColor = lightColors[gender]
+  let mainColor = colors[gender]
   let svg = d3.select(`#${svgId}`)
     .attr("width", WIDTH)
     .attr("height", HEIGHT);
@@ -199,17 +208,37 @@ function createMap(svgId, name, gender) {
     });
 }
 /**
- * Get data for a single name given an object of data, suitable for d3
- *
+ * Get data for a single name given an object of data and a gender, 
+ * suitable for d3. Gender must be "male", "female", or "all."
+ * 
  * @param {Object} data
  * @param {String} name
+ * @param {String} gender
  */
-function __getDataByName(data, name) {
-  return Object.keys(data).map(year => ({
-    year: +year, 
-    count: data[year].names[name] || 0,
-    totalBirths: __getBirthCountByYear(data, year)
+function __getDataByName(data, name, gender) {
+  if (gender !== "female") {
+    var maleData = Object.keys(data.maleData).map(year => ({
+      year: +year, 
+      count: data.maleData[year].names[name] || 0,
+      totalBirths: __getBirthCountByYear(data.maleData, year)
+    }));
+  }
+  if (gender !== "male") {
+    var femaleData = Object.keys(data.femaleData).map(year => ({
+      year: +year, 
+      count: data.femaleData[year].names[name] || 0,
+      totalBirths: __getBirthCountByYear(data.femaleData, year)
+    }));
+  } 
+  if (gender === "male") return maleData;
+  else if (gender === "female") return femaleData;
+  
+  return maleData.map((d, i) => ({
+    year: d.year,
+    count: d.count + femaleData[i].count,
+    totalBirths: d.totalBirths + femaleData[i].totalBirths
   }));
+  
 }
 
 /**
@@ -316,8 +345,7 @@ function __plotStateData(abbreviation, color, name, gender) {
 
   d3.json(`./assets/json/${abbreviation}.json`, function(d) {
 
-    let data = d[gender === "male" ? 'maleData' : 'femaleData'];
-    let nameData = __getDataByName(data, name);
+    let nameData = __getDataByName(d, name, gender);
     let allData = nameData.concat(d3.selectAll("circle").data());
     
     let xScale = __createScale(

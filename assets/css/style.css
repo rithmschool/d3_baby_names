@@ -125,6 +125,10 @@
   color: #A95706;
 }
 
+.all {
+  color: #5B2A80;
+}
+
 .state:hover {
   cursor: pointer;
 }

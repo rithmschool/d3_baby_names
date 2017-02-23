@@ -4,6 +4,7 @@ import "../css/style.css";
 
 import uniqueBoyNames from "./uniqueBoyNames";
 import uniqueGirlNames from "./uniqueGirlNames";
+import uniqueNames from './uniqueNames';
 import Autocomplete from 'autocomplete';
 import { capitalize, updateNameList, createChart, createMap } from './helpers'
 
@@ -13,7 +14,16 @@ maleAutocomplete.initialize(wordAdd => wordAdd(uniqueBoyNames));
 let femaleAutocomplete = Autocomplete.connectAutocomplete();
 femaleAutocomplete.initialize(wordAdd => wordAdd(uniqueGirlNames));
 
-let currentAutocomplete = femaleAutocomplete;
+let allAutocomplete = Autocomplete.connectAutocomplete();
+allAutocomplete.initialize(wordAdd => wordAdd(uniqueNames));
+
+let autocompletes = {
+  male: maleAutocomplete,
+  female: femaleAutocomplete,
+  all: allAutocomplete
+}
+
+let currentAutocomplete = autocompletes.all;
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -24,9 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // keep autocomplete current
   form.addEventListener('mousedown', function(e) {
     if (e.target.type === "radio") {
-      currentAutocomplete = e.target.value === "male" ?
-                            maleAutocomplete :
-                            femaleAutocomplete;
+      currentAutocomplete = autocompletes[e.target.value];
     }
   });
 
