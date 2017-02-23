@@ -197,4 +197,18 @@ iframe {
     margin-left: auto;
   }
 }
+
+@media (max-width: 578px) {
+  .banner {
+    background-attachment: scroll;
+  }
+
+  svg {
+    margin-top: -100px;
+  }
+
+  #results .pure-g:last-child .pure-u-1 {
+    justify-content: center;
+  }
+}
 /*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzdHlsZXMuY3NzIiwic291cmNlUm9vdCI6IiJ9*/
