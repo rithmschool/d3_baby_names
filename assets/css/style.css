@@ -1,7 +1,3 @@
-body {
-  overflow-y: hidden;
-}
-
 .pure-menu-horizontal {
   background-color: #daa9ff;
   position: relative;
@@ -40,34 +36,30 @@ body {
   justify-content: center;
   flex-direction: column;
   color: white;
-  transition: transform 2s;
-  position: relative;
-  z-index: 100;
+  transition: transform 2s linear;
+  position: absolute;
+  z-index: 2;
+  top: 54px;
 }
 
 .banner.submitted {
-  transform: translate(0, -100vh);
-}
-
-.banner.submitted .banner-content {
-  opacity: 0;
+  transform: translate(0,-100vh);
 }
 
 #results {
-  transition: transform 2s;
+  position: absolute;
+  width: 100%;
   display: none;
 }
 
 #results.submitted {
   display: block;
-  transform: translate(0, -98vh);
 }
 
 .banner-content {
   text-align: right;
   margin-right: 30px;
   text-shadow: 0 0 10px #333;
-  transition: opacity 2s;
 }
 
 .banner-content input {
@@ -139,7 +131,7 @@ body {
 
 .pure-u-1 h1 {
   text-align: center;
-  margin: 60px auto 20px;
+  margin: 20px auto;
 }
 
 #results .pure-g:last-child .pure-u-1 {
