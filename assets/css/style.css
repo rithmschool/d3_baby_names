@@ -44,6 +44,15 @@
 
 .banner.submitted {
   transform: translate(0,-100vh);
+  background-image: linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0.3)), url('../images/baby-hero.jpg');
+  background-repeat: no-repeat;
+  background-position: left top; 
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  width: 100%;
 }
 
 #results {

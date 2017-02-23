@@ -60,6 +60,15 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
 
 .banner.submitted {
   transform: translate(0,-100vh);
+  background-image: linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0.3)), url(9863fa999b56ee3cd810aec8c0c127e3.jpg);
+  background-repeat: no-repeat;
+  background-position: left top; 
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  width: 100%;
 }
 
 #results {
