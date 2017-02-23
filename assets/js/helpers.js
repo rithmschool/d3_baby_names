@@ -64,7 +64,7 @@ function createChart(svgId, name, gender) {
   d3.json("./assets/json/aggregate.json", function(d) {
     let color = colors[gender];
     let nameData = __getDataByName(d, name, gender);
-    debugger
+
     // set up axes and scales
     let xScale = __createScale(
       d3.min(nameData, d => d.year),
