@@ -52,7 +52,7 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
   justify-content: center;
   flex-direction: column;
   color: white;
-  transition: transform 2s linear;
+  transition: transform 1s linear;
   position: absolute;
   z-index: 2;
   top: 54px;
