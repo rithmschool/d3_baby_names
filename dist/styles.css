@@ -154,6 +154,10 @@ https://github.com/yahoo/pure/blob/master/LICENSE.md
   margin: 20px auto;
 }
 
+.pure-u-1 h4 {
+  text-align: center;
+}
+
 #results .pure-g:last-child .pure-u-1 {
   display: flex;
   justify-content: flex-end;
