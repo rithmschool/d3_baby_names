@@ -199,7 +199,8 @@ iframe {
 }
 
 @media (max-width: 578px) {
-  .banner {
+  .banner,
+  .banner.submitted {
     background-attachment: scroll;
   }
 
